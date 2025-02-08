@@ -13,17 +13,16 @@ const CreateTask = ({ children }) => {
 
   const [employees, setEmployees] = useState([]);
 
-  // LocalStorage se employees fetch karna jab component mount ho
   useEffect(() => {
+    // Fetch employees from localStorage
     const storedData = JSON.parse(localStorage.getItem("employees")) || [];
     setEmployees(storedData);
   }, []);
 
-  // Task submit karne ka function
-  const submitHandle = (data) => {
-    const { title, description, date, category, assignTo } = data;
+  const submitHandle = () => {
+   
 
-    const newTask = {
+    const Task = {
       title,
       description,
       status: "new",
@@ -31,27 +30,24 @@ const CreateTask = ({ children }) => {
       date,
     };
 
-    // Employees ka data update karna jiss employee ko task assign hoga
     const updatedEmployees = employees.map((employee) => {
       if (employee.name === assignTo) {
-        employee.tasks.push(newTask);
+        employee.tasks.push(Task);
         employee.taskCount.newTask += 1;
       }
       return employee;
     });
 
-    // LocalStorage update karna
     localStorage.setItem("employees", JSON.stringify(updatedEmployees));
     localStorage.setItem("loggedInUser", JSON.stringify(updatedEmployees));
 
-    reset(); // Form reset karna
+    reset(); // Reset form after submission
   };
 
   return (
     <updateContext.Provider value={employees}>
       <div>
         <form onSubmit={handleSubmit(submitHandle)} className="flex flex-col p-10 gap-6">
-          
           {/* Title Field */}
           <input
             {...register("title", { required: "Title is required" })}
@@ -105,7 +101,6 @@ const CreateTask = ({ children }) => {
           />
           {errors.category && <small className="text-red-600">{errors.category.message}</small>}
 
-          {/* Submit Button */}
           <button type="submit" className="font-bold py-4 cursor-pointer bg-amber-300">
             Create Task
           </button>
