@@ -1,51 +1,75 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react'
+import { AuthContext } from '../../../context/AuthProvider'
 import { updateContext } from './CreateTask';
-
+import { use } from 'react';
+// import { data } from 'autoprefixer';
 const AllTasks = () => {
   const [employees, setEmployees] = useState([]);
+  const data = localStorage.getItem("employees")
 
-  //  Component mount hone par employees localStorage se load karna
   useEffect(() => {
-    const storedEmployees = localStorage.getItem("employees");
-    if (storedEmployees) {
-      setEmployees(JSON.parse(storedEmployees));
+    // Load employees from localStorage when component mounts
+    const data = localStorage.getItem("employees");
+    if (data) {
+      setEmployees(JSON.parse(data));
     }
   }, []);
+  
+  const up_data = useContext(updateContext)
 
-  const updatedData = useContext(updateContext);
+  // const [ newD , setNewD ] = useState([])
 
-  //  Jab bhi updatedData change ho, employees ko update karna
+  // setNewD(up_data)
   useEffect(() => {
-    if (updatedData) {
-      setEmployees(updatedData);
-    }
-  }, [updatedData]);
+  if(up_data){
+    setEmployees(up_data)
+
+  }
+
+  }, [up_data]);
+
+
 
   return (
-    <div className="px-10">
-      <h1 className="text-2xl font-bold">All Tasks</h1>
+  
+ <div className='px-10'>
+  <h1 className='text-2xl font-bold'>All Tasks</h1>
 
-      {/*  Table Header */}
-      <div className="flex justify-between w-full bg-amber-300">
-        <h1 className="px-4 w-1/5 py-3 text-lg font-bold">Employee Name</h1>
-        <h1 className="px-4 w-1/5 py-3 text-lg font-bold">New Tasks</h1>
-        <h1 className="px-4 w-1/5 py-3 text-lg font-bold">Active Tasks</h1>
-        <h1 className="px-4 w-1/5 py-3 text-lg font-bold">Completed Tasks</h1>
-        <h1 className="px-4 w-1/5 py-3 text-lg font-bold">Failed Tasks</h1>
-      </div>
+ <div className='flex justify-between w-full bg-amber-300'>
+        <h1 className='px-4 w-1/5 py-3 text-lg font-bold'>Employee Name</h1>
+        <h1 className='px-4 w-1/5 py-3 text-lg font-bold'>New Task</h1>
+        <h1 className='px-4 w-1/5 py-3 text-lg font-bold'>Active Task</h1>
+        <h1 className='px-4 w-1/5 py-3 text-lg font-bold'>Completed Task</h1>
+        <h1 className='px-4 w-1/5 py-3 text-lg font-bold'>Failed Task</h1>
 
-      {/*  Employees Data Render */}
-      {employees.map((employee, index) => (
-        <div key={index} className="flex justify-between w-full bg-green-500">
-          <h1 className="px-4 w-1/5 py-3 text-lg">{employee.name}</h1>
-          <h1 className="px-4 w-1/5 py-3 text-lg">{employee.taskCount.newTask}</h1>
-          <h1 className="px-4 w-1/5 py-3 text-lg">{employee.taskCount.active}</h1>
-          <h1 className="px-4 w-1/5 py-3 text-lg">{employee.taskCount.completed}</h1>
-          <h1 className="px-4 w-1/5 py-3 text-lg">{employee.taskCount.failed}</h1>
-        </div>
-      ))}
-    </div>
-  );
-};
 
-export default AllTasks;
+ </div>
+      
+ {
+
+employees.map((e , id)=>{
+
+    return <div key={id} className='flex justify-between w-full bg-green-500'>
+    <h1 className='px-4 w-1/5 py-3 text-lg'>{e.name}</h1>
+    <h1 className='px-4 w-1/5 py-3 text-lg'>{e.taskCount.newTask}</h1>
+    <h1 className='px-4 w-1/5 py-3  text-lg'>{e.taskCount.active}</h1>
+    <h1 className='px-4 w-1/5 py-3  text-lg'>{e.taskCount.completed}</h1>
+    <h1 className='px-4 w-1/5 py-3  text-lg'>{e.taskCount.failed}</h1>
+
+
+</div>
+    
+  })
+}
+
+
+
+
+ </div>
+
+    
+
+  )
+}
+
+export default AllTasks
