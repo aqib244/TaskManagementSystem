@@ -20,7 +20,7 @@ const Login = ({ handleLogin }) => {
     // setPassword("");
   };
 
-  // console.log(Email : ${email} , Pass : ${password})
+  console.log(Email : ${email} , Pass : ${password})
   return (
     <div className="flex h-screen justify-center items-center">
       <div className=" bg-amber-300 flex  justify-center w-[400px] flex-col gap-6 p-15 rounded-lg">
@@ -77,6 +77,6 @@ const Login = ({ handleLogin }) => {
   );
 };
 
-export default Login; 
+export default Login;
 
          
