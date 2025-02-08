@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 export const updateContext = createContext();
@@ -11,6 +11,9 @@ const CreateTask = ({ children }) => {
     formState: { errors },
   } = useForm();
 
+  const [upnew, setNew] = useState(null);
+
+  
   const [employees, setEmployees] = useState([]);
 
   useEffect(() => {
@@ -19,8 +22,11 @@ const CreateTask = ({ children }) => {
     setEmployees(storedData);
   }, []);
 
-  const submitHandle = () => {
-   
+
+  const submitHandle = (data) => {
+    console.log("Form Data Submitted:", data);
+
+    const { title, description, date, category, assignTo } = data;
 
     const Task = {
       title,
@@ -29,6 +35,9 @@ const CreateTask = ({ children }) => {
       category,
       date,
     };
+
+    const storedData = localStorage.getItem("employees");
+    const employees = JSON.parse(storedData) || [];
 
     const updatedEmployees = employees.map((employee) => {
       if (employee.name === assignTo) {
@@ -39,18 +48,24 @@ const CreateTask = ({ children }) => {
     });
 
     localStorage.setItem("employees", JSON.stringify(updatedEmployees));
-    localStorage.setItem("loggedInUser", JSON.stringify(updatedEmployees));
-
+    setNew(updatedEmployees);
     reset(); // Reset form after submission
   };
 
+  useEffect(() => {
+    console.log("Updated Employees:", upnew);
+  }, [upnew]);
+
   return (
-    <updateContext.Provider value={employees}>
+    <updateContext.Provider value={upnew}>
       <div>
-        <form onSubmit={handleSubmit(submitHandle)} className="flex flex-col p-10 gap-6">
+        <form
+          onSubmit={handleSubmit(submitHandle)}
+          className="flex flex-col p-10 gap-6"
+        >
           {/* Title Field */}
           <input
-            {...register("title", { required: "Title is required" })}
+            {...register("title", { required: "Title is required", minLength: { value: 3, message: "Title must be at least 3 characters long" } })}
             type="text"
             className="border border-black rounded p-4 outline-none"
             placeholder="Enter Title"
@@ -59,12 +74,9 @@ const CreateTask = ({ children }) => {
 
           {/* Description Field */}
           <textarea
-            {...register("description", {
-              required: "Description is required",
-              minLength: { value: 10, message: "Description must be at least 10 characters" },
-            })}
+            {...register("description", { required: "Description is required", minLength: { value: 10, message: "Description must be at least 10 characters long" } })}
             className="border border-black rounded p-4 outline-none"
-            placeholder="Description"
+            placeholder="Enter Description"
             cols={30}
             rows={5}
           />
@@ -72,13 +84,16 @@ const CreateTask = ({ children }) => {
 
           {/* Date Field */}
           <input
-            {...register("date", { required: "Date is required" })}
+            {...register("date", { 
+              required: "Date is required", 
+              validate: (value) => new Date(value) >= new Date() || "Date cannot be in the past" 
+            })}
             type="date"
             className="border border-black rounded p-4 outline-none"
           />
           {errors.date && <small className="text-red-600">{errors.date.message}</small>}
 
-          {/* Assign To - Select Field */}
+          {/* Assign To Field */}
           <select
             {...register("assignTo", { required: "Please assign this task to someone" })}
             className="border border-black rounded p-4 outline-none"
@@ -97,7 +112,7 @@ const CreateTask = ({ children }) => {
             {...register("category", { required: "Category is required" })}
             type="text"
             className="border border-black rounded p-4 outline-none"
-            placeholder="Category"
+            placeholder="Enter Category"
           />
           {errors.category && <small className="text-red-600">{errors.category.message}</small>}
 
@@ -112,4 +127,5 @@ const CreateTask = ({ children }) => {
 };
 
 export default CreateTask;
+
 
